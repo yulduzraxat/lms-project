@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Courses — EDULIX{% endblock %}
+
+{% block content %}
+<span class="hero-badge">Catalog</span>
+<h1 class="hero-title">Explore every course</h1>
+<p class="hero-subtitle">Search, filter, and find your next course — from academics to careers.</p>
+
+<form method="get" class="search-panel glass">
+  <div class="search-input-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" name="q" value="{{ query }}" class="input-field" placeholder="Search courses...">
+  </div>
+
+  <div class="dropdown" data-autosubmit="true">
+    <button type="button" class="dropdown-toggle">
+      <span class="dropdown-label">
+        {% if selected_category == 'fan' %}Subjects{% elif selected_category == 'kasb' %}Careers{% else %}All categories{% endif %}
+      </span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="dropdown-menu">
+      <div class="dropdown-item {% if not selected_category %}active{% endif %}" data-value="">All categories</div>
+      <div class="dropdown-item {% if selected_category == 'fan' %}active{% endif %}" data-value="fan">Subjects</div>
+      <div class="dropdown-item {% if selected_category == 'kasb' %}active{% endif %}" data-value="kasb">Careers</div>
+    </div>
+    <input type="hidden" name="category" value="{{ selected_category|default:'' }}">
+  </div>
+
+  <div class="dropdown" data-autosubmit="true">
+    <button type="button" class="dropdown-toggle">
+      <span class="dropdown-label">
+        {% if selected_sort == 'popular' %}Most viewed{% elif selected_sort == 'lessons' %}By lessons{% else %}Newest{% endif %}
+      </span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="dropdown-menu">
+      <div class="dropdown-item {% if selected_sort == 'newest' or not selected_sort %}active{% endif %}" data-value="newest">Newest</div>
+      <div class="dropdown-item {% if selected_sort == 'popular' %}active{% endif %}" data-value="popular">Most viewed</div>
+      <div class="dropdown-item {% if selected_sort == 'lessons' %}active{% endif %}" data-value="lessons">By lessons</div>
+    </div>
+    <input type="hidden" name="sort" value="{{ selected_sort|default:'newest' }}">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<p class="results-count"><strong>{{ courses|length }}</strong> courses found</p>
+
+{% if courses %}
+<div class="course-grid">
+  {% for course in courses %}
+  <div class="course-card">
+    {% if course.cover_image %}
+      <img src="{{ course.cover_image.url }}" alt="{{ course.title }}" class="course-thumb">
+    {% else %}
+      <div class="course-thumb-placeholder">
+        <span class="course-badge">Free</span>
+      </div>
+    {% endif %}
+    <div class="card-body">
+      <span class="category-tag {% if course.category == 'fan' %}cat-fan{% else %}cat-kasb{% endif %}">
+        {{ course.get_category_display }}
+      </span>
+      <div class="card-title">{{ course.title }}</div>
+      <div class="card-meta" style="margin-bottom:0.75rem">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        {{ course.lesson_count }} lessons
+      </div>
+      <p class="text-muted" style="font-size:0.9rem">{{ course.description|truncatewords:18 }}</p>
+      <div class="card-cta">
+        <a href="{% url 'course_detail' course.id %}" class="btn">View course</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="glass" style="border-radius:1.25rem; padding:2.5rem; text-align:center;">
+  <p class="text-muted">No courses found.</p>
+</div>
+{% endif %}
+{% endblock %}

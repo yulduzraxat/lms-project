@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — EDULIX{% endblock %}
+
+{% block content %}
+<h1 class="section-title">My Courses</h1>
+
+{% if courses %}
+<div class="course-grid" style="margin-top:1.5rem;">
+  {% for course in courses %}
+  <div class="course-card">
+    <div class="card-body">
+      <div class="card-title">{{ course.title }}</div>
+      <p class="text-muted" style="font-size:0.85rem;">{{ course.student_count }} students · {{ course.lesson_count }} lessons</p>
+      <div class="card-cta">
+        <a href="{% url 'course_detail' course.id %}" class="btn">Manage</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted" style="margin-top:1rem;">You haven't created any courses yet. <a href="{% url 'create_course' %}" class="link">Create one</a></p>
+{% endif %}
+{% endblock %}

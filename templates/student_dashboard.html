@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}My Courses — EDULIX{% endblock %}
+
+{% block content %}
+<h1 class="section-title">My Courses</h1>
+
+{% if courses_data %}
+<div class="course-grid" style="margin-top:1.5rem;">
+  {% for data in courses_data %}
+  <div class="course-card">
+    <div class="card-body">
+      <div class="card-title">{{ data.course.title }}</div>
+      <p class="text-muted" style="font-size:0.85rem;">{{ data.completed_count }}/{{ data.total_lessons }} lessons ({{ data.progress_percent }}%)</p>
+      <div class="card-cta">
+        <a href="{% url 'course_detail' data.course.id %}" class="btn">Continue</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted" style="margin-top:1rem;">You're not enrolled in any courses yet. <a href="{% url 'course_list' %}" class="link">Browse courses</a></p>
+{% endif %}
+{% endblock %}

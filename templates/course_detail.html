@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} — EDULIX{% endblock %}
+
+{% block content %}
+<div class="glass" style="border-radius:1.5rem; padding:2rem; margin-bottom:2rem;">
+  <h1 class="section-title">{{ course.title }}</h1>
+  <p class="text-muted">{{ course.description }}</p>
+
+  {% if user.is_authenticated %}
+    {% if is_course_teacher %}
+      <div style="display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap;">
+        <a href="{% url 'create_lesson' course.id %}" class="btn btn-primary">+ Add Lesson</a>
+        <a href="{% url 'create_quiz' course.id %}" class="btn btn-secondary">+ Create Quiz</a>
+        <a href="{% url 'course_students' course.id %}" class="btn btn-secondary">Students</a>
+      </div>
+    {% elif not is_enrolled %}
+      <a href="{% url 'enroll_course' course.id %}" class="btn btn-primary" style="margin-top:1.25rem; display:inline-flex;">Enroll in course</a>
+    {% else %}
+      <p class="form-hint" style="margin-top:1rem; color:#4ade80;">✓ You are enrolled in this course</p>
+    {% endif %}
+  {% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary" style="margin-top:1.25rem; display:inline-flex;">Sign in to enroll</a>
+  {% endif %}
+</div>
+
+<h2 class="section-title" style="font-size:1.3rem;">Lessons</h2>
+{% if course.lessons.all %}
+<div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1rem;">
+  {% for lesson in course.lessons.all %}
+  <div class="course-card" style="flex-direction:row; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem;">
+    <div>
+      <div class="card-title" style="margin-bottom:0.15rem;">{{ lesson.title }}</div>
+      {% if lesson.id in completed_lesson_ids %}
+        <span class="text-muted" style="color:#4ade80; font-size:0.85rem;">✓ Completed</span>
+      {% endif %}
+    </div>
+    {% if is_enrolled %}
+      <form method="post" action="{% url 'mark_lesson_complete' lesson.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">
+          {% if lesson.id in completed_lesson_ids %}Mark again{% else %}Mark as complete{% endif %}
+        </button>
+      </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No lessons yet.</p>
+{% endif %}
+
+{% if course.quizzes.all %}
+<h2 class="section-title" style="font-size:1.3rem; margin-top:2rem;">Quizzes</h2>
+<div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1rem;">
+  {% for quiz in course.quizzes.all %}
+  <div class="course-card" style="flex-direction:row; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem;">
+    <div class="card-title" style="margin-bottom:0;">{{ quiz.title }}</div>
+    {% if is_enrolled %}
+      <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Start quiz</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

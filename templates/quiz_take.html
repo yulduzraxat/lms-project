@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}{{ quiz.title }} — EDULIX{% endblock %}
+
+{% block content %}
+<div class="glass" style="border-radius:1.5rem; padding:2rem; max-width:700px; margin:0 auto;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+    <h1 class="section-title" style="margin-bottom:0;">{{ quiz.title }}</h1>
+    {% if quiz.time_limit %}
+      <span class="filter-chip" id="timer-box" style="cursor:default;">
+        ⏱ <span id="timer-display">{{ quiz.time_limit }}:00</span>
+      </span>
+    {% endif %}
+  </div>
+
+  <form method="post" id="quiz-take-form">
+    {% csrf_token %}
+    {% for question in quiz.questions.all %}
+    <div style="margin-bottom:1.75rem;">
+      <p style="font-weight:600; margin-bottom:0.75rem;">{{ forloop.counter }}. {{ question.text }}</p>
+      {% for choice in question.choices.all %}
+      <label class="filter-chip" style="display:flex; width:100%; margin-bottom:0.5rem; justify-content:flex-start;">
+        <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}" required>
+        {{ choice.text }}
+      </label>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary w-full">Submit</button>
+  </form>
+</div>
+
+{% if quiz.time_limit %}
+<script>
+(function() {
+  let remaining = {{ quiz.time_limit }} * 60;
+  const display = document.getElementById('timer-display');
+  const box = document.getElementById('timer-box');
+  const form = document.getElementById('quiz-take-form');
+
+  const interval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    display.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+
+    if (remaining <= 30) {
+      box.style.color = '#f87171';
+      box.style.borderColor = '#f87171';
+    }
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      form.submit();
+    }
+  }, 1000);
+})();
+</script>
+{% endif %}
+{% endblock %}

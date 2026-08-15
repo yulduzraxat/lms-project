@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Result — EDULIX{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card glass" style="text-align:center;">
+    <h1 class="section-title">Your Result</h1>
+    <p style="font-size:3rem; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent; margin:1rem 0;">
+      {{ submission.score|floatformat:0 }}%
+    </p>
+    <p class="text-muted">"{{ submission.quiz.title }}" quiz</p>
+    <a href="{% url 'course_detail' submission.quiz.course.id %}" class="btn btn-primary w-full" style="margin-top:1.5rem;">Back to course</a>
+  </div>
+</div>
+{% endblock %}

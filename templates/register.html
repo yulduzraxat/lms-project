@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up — EDULIX{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card glass">
+    <h1 class="section-title">Create an account</h1>
+    <p class="text-muted mb-6">Welcome to EDULIX</p>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<p class="form-error">{{ form.username.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<p class="form-error">{{ form.email.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <div class="dropdown">
+          <button type="button" class="dropdown-toggle">
+            <span class="dropdown-label">Student</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-item active" data-value="student">Student</div>
+            <div class="dropdown-item" data-value="teacher">Teacher</div>
+          </div>
+          <input type="hidden" name="role" value="student">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password1.id_for_label }}">Password</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<p class="form-error">{{ form.password1.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<p class="form-error">{{ form.password2.errors.0 }}</p>{% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+    </form>
+
+    <p class="form-hint mt-4">
+      Already have an account? <a href="{% url 'login' %}" class="link">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
