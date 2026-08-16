@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Course(models.Model):
@@ -12,7 +12,7 @@ class Course(models.Model):
     description = models.TextField()
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='fan')
     cover_image = models.ImageField(upload_to='courses/', blank=True, null=True)
-    teachers = models.ManyToManyField(User, through='CourseTeacher', related_name='courses')
+    teachers = models.ManyToManyField(settings.AUTH_USER_MODEL, through='CourseTeacher', related_name='courses')
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -31,7 +31,7 @@ class Course(models.Model):
 
 class CourseTeacher(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(User, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     assigned_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -52,7 +52,7 @@ class Lesson(models.Model):
 
 
 class Enrollment(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='enrollments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
@@ -64,7 +64,7 @@ class Enrollment(models.Model):
 
 
 class LessonProgress(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lesson_progress')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_progress')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress_records')
     is_completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)

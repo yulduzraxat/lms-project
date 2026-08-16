@@ -1,15 +1,15 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import User
 
 
 class RegisterForm(UserCreationForm):
     role = forms.ChoiceField(
-        choices=[('student', 'Student'), ('teacher', "Teacher")],
+        choices=User.ROLE_CHOICES,
         label="Role"
     )
     email = forms.EmailField(required=True, label="Email",
-        widget=forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'write your email'}))
+        widget=forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'you@email.com'}))
 
     class Meta:
         model = User

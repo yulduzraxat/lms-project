@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from courses.models import Course
 
 
 class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='quizzes')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_quizzes')
     title = models.CharField(max_length=200)
     time_limit = models.PositiveIntegerField(default=0, help_text="Daqiqalarda, 0 = cheklanmagan")
 
@@ -31,7 +31,7 @@ class Choice(models.Model):
 
 
 class QuizSubmission(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_submissions')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='quiz_submissions')
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='submissions')
     score = models.FloatField(default=0)
     submitted_at = models.DateTimeField(auto_now_add=True)
@@ -41,7 +41,7 @@ class QuizSubmission(models.Model):
 
 
 class StudentAnswer(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
 

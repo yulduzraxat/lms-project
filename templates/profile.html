@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — EDULIX{% endblock %}
+
+{% block content %}
+<div class="glass" style="border-radius:1.5rem; padding:2rem; margin-bottom:2rem; display:flex; align-items:center; gap:1.5rem;">
+  <div class="brand-badge" style="width:4rem; height:4rem; font-size:1.5rem;">
+    {{ user.username|first|upper }}
+  </div>
+  <div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">{{ user.username }}</h1>
+    <p class="text-muted">{{ user.email }}</p>
+    <span class="filter-chip" style="cursor:default; margin-top:0.5rem; display:inline-flex;">
+      {% if role == 'teacher' %}Teacher{% else %}Student{% endif %}
+    </span>
+  </div>
+</div>
+
+{% if role == 'teacher' %}
+  <h2 class="section-title" style="font-size:1.3rem;">Courses I Teach</h2>
+  {% if courses %}
+  <div class="course-grid" style="margin-top:1.5rem;">
+    {% for course in courses %}
+    <div class="course-card">
+      <div class="card-body">
+        <div class="card-title">{{ course.title }}</div>
+        <p class="text-muted" style="font-size:0.85rem;">{{ course.student_count }} students · {{ course.lesson_count }} lessons</p>
+        <div class="card-cta">
+          <a href="{% url 'course_detail' course.id %}" class="btn">View</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-muted" style="margin-top:1rem;">You haven't created any courses yet.</p>
+  {% endif %}
+{% else %}
+  <h2 class="section-title" style="font-size:1.3rem;">Courses I'm Taking</h2>
+  {% if courses_data %}
+  <div class="course-grid" style="margin-top:1.5rem;">
+    {% for data in courses_data %}
+    <div class="course-card">
+      <div class="card-body">
+        <div class="card-title">{{ data.course.title }}</div>
+        <p class="text-muted" style="font-size:0.85rem;">{{ data.completed_count }}/{{ data.total_lessons }} lessons ({{ data.progress_percent }}%)</p>
+        <div class="card-cta">
+          <a href="{% url 'course_detail' data.course.id %}" class="btn">Continue</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-muted" style="margin-top:1rem;">You're not enrolled in any courses yet.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

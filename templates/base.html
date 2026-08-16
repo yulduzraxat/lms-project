@@ -32,12 +32,13 @@
           <a href="{% url 'course_list' %}" class="nav-link">Courses</a>
 
           {% if user.is_authenticated %}
-            {% if user.profile.role == 'teacher' %}
+            {% if user.role == 'teacher' %}
               <a href="{% url 'create_course' %}" class="nav-link">New Course</a>
               <a href="{% url 'teacher_dashboard' %}" class="nav-link">Dashboard</a>
             {% else %}
               <a href="{% url 'student_dashboard' %}" class="nav-link">My Courses</a>
             {% endif %}
+            <a href="{% url 'profile' %}" class="nav-link">Profile</a>
             <span class="text-muted" style="font-size:0.9rem">Hi, {{ user.username }}</span>
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}
@@ -52,6 +53,7 @@
         <div class="mobile-menu js-mobile-menu">
           <a href="{% url 'course_list' %}" class="nav-link">Courses</a>
           {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link">Profile</a>
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}
               <button type="submit" class="btn btn-secondary w-full">Log out</button>
