@@ -4,11 +4,12 @@ A full-featured Learning Management System (LMS) built with Django, where teache
 
 ## Features
 
-- **Role-based accounts** — students and teachers with separate permissions, powered by a signal-driven profile system
+- **Role-based accounts** — a custom User model (extending Django's `AbstractUser`) with a `role` field distinguishes students from teachers, enforced through custom decorators on protected views
 - **Course management** — create courses with categories, cover images, and lessons
 - **Enrollment & progress tracking** — students enroll in courses and mark lessons as complete
 - **Quizzes** — teachers create quizzes with multiple-choice questions and an optional time limit; students take quizzes with a live countdown timer
 - **Search, filter & sort** — search courses by keyword, filter by category, and sort by newest, popularity, or lesson count
+- **Personal profile page** — each user sees their own courses (taught or enrolled) and progress in one place
 - **Teacher & student dashboards** — teachers see enrolled students and their progress; students see their own course progress
 
 ## Tech Stack
@@ -21,7 +22,7 @@ A full-featured Learning Management System (LMS) built with Django, where teache
 
 The project is split into three Django apps, each with a single responsibility:
 
-- `accounts` — user authentication and roles (student/teacher)
+- `accounts` — custom User model, authentication, and role-based permissions
 - `courses` — courses, lessons, enrollments, and progress
 - `quizzes` — quizzes, questions, choices, and submissions
 
@@ -38,10 +39,12 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+Create a `.env` file in the project root with:
+
 Then open `http://127.0.0.1:8000/` in your browser.
 
 ## Security Notes
 
-- Choice-question integrity is validated on quiz submission to prevent answer tampering
+- Choice-question integrity is validated on quiz submission, so a submitted answer must belong to the question it was submitted for — this prevents answer tampering
 - Enrollment is verified before allowing quiz access or lesson completion
-- User profiles are created automatically via Django signals, so accounts created through any method always have a valid profile
+- `SECRET_KEY` and `DEBUG` are loaded from environment variables via `python-decouple`, keeping sensitive config out of version control
