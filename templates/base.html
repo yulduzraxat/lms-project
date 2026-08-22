@@ -37,6 +37,7 @@
               <a href="{% url 'teacher_dashboard' %}" class="nav-link">Dashboard</a>
             {% else %}
               <a href="{% url 'student_dashboard' %}" class="nav-link">My Courses</a>
+              <a href="{% url 'cart_view' %}" class="nav-link">Cart</a>
             {% endif %}
             <a href="{% url 'profile' %}" class="nav-link">Profile</a>
             <span class="text-muted" style="font-size:0.9rem">Hi, {{ user.username }}</span>
@@ -53,6 +54,9 @@
         <div class="mobile-menu js-mobile-menu">
           <a href="{% url 'course_list' %}" class="nav-link">Courses</a>
           {% if user.is_authenticated %}
+            {% if user.role != 'teacher' %}
+              <a href="{% url 'cart_view' %}" class="nav-link">Cart</a>
+            {% endif %}
             <a href="{% url 'profile' %}" class="nav-link">Profile</a>
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}

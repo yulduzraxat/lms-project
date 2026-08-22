@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — EDULIX{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card glass">
+    <h1 class="section-title">Checkout</h1>
+    <p class="text-muted mb-6">Total: <strong style="color:var(--text)">${{ total }}</strong></p>
+
+    {% if error %}<p class="form-error" style="margin-bottom:1rem;">{{ error }}</p>{% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Card number</label>
+        <input type="text" name="card_number" class="input-field" placeholder="1234 5678 9012 3456" maxlength="19" required>
+      </div>
+      <div class="form-group">
+        <label>Expiry date</label>
+        <input type="text" name="expiry" class="input-field" placeholder="MM/YY" maxlength="5" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Pay ${{ total }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

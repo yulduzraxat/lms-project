@@ -6,6 +6,8 @@ from accounts.decorators import teacher_required
 from .models import Course, Enrollment, CourseTeacher, Lesson, LessonProgress
 from .forms import CourseForm, LessonForm
 from quizzes.models import QuizSubmission
+import random
+from django.contrib import messages
 
 
 def course_list(request):
@@ -169,3 +171,87 @@ def student_dashboard(request):
             'progress_percent': progress_percent,
         })
     return render(request, 'student_dashboard.html', {'courses_data': courses_data})
+
+@login_required
+def add_to_cart(request, id):
+    course = get_object_or_404(Course, id=id)
+    cart = request.session.get('cart', [])
+    if course.id not in cart:
+        cart.append(course.id)
+        request.session['cart'] = cart
+    return redirect('cart_view')
+
+
+@login_required
+def cart_view(request):
+    cart = request.session.get('cart', [])
+    courses = Course.objects.filter(id__in=cart)
+    total = sum(c.price for c in courses)
+    return render(request, 'cart.html', {'courses': courses, 'total': total})
+
+
+@login_required
+def remove_from_cart(request, id):
+    cart = request.session.get('cart', [])
+    if id in cart:
+        cart.remove(id)
+        request.session['cart'] = cart
+    return redirect('cart_view')
+
+
+@login_required
+def checkout(request):
+    cart = request.session.get('cart', [])
+    if not cart:
+        return redirect('cart_view')
+
+    courses = Course.objects.filter(id__in=cart)
+    total = sum(c.price for c in courses)
+
+    if request.method == 'POST':
+        card_number = request.POST.get('card_number', '').replace(' ', '')
+        expiry = request.POST.get('expiry', '')
+
+        if len(card_number) != 16 or not card_number.isdigit():
+            return render(request, 'checkout.html', {
+                'courses': courses, 'total': total,
+                'error': 'Please enter a valid 16-digit card number.'
+            })
+
+        code = str(random.randint(10000, 99999))
+        request.session['payment_code'] = code
+        request.session['card_last4'] = card_number[-4:]
+        print(f"\n{'='*40}\n📱 SMS CODE for {request.user.username}: {code}\n{'='*40}\n")
+        return redirect('verify_code')
+
+    return render(request, 'checkout.html', {'courses': courses, 'total': total})
+
+
+@login_required
+def verify_code(request):
+    real_code = request.session.get('payment_code')
+    if not real_code:
+        return redirect('cart_view')
+
+    error = None
+    if request.method == 'POST':
+        entered_code = request.POST.get('code', '')
+        if entered_code == real_code:
+            cart = request.session.get('cart', [])
+            courses = Course.objects.filter(id__in=cart)
+            for course in courses:
+                Enrollment.objects.get_or_create(student=request.user, course=course)
+
+            del request.session['cart']
+            del request.session['payment_code']
+            del request.session['card_last4']
+            return redirect('payment_success')
+        else:
+            error = 'Incorrect code. Please try again.'
+
+    return render(request, 'verify_code.html', {'error': error})
+
+
+@login_required
+def payment_success(request):
+    return render(request, 'payment_success.html')

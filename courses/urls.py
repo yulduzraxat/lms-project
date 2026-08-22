@@ -11,4 +11,10 @@ urlpatterns = [
     path('dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
     path('course/<int:course_id>/students/', views.course_students, name='course_students'),
     path('my-courses/', views.student_dashboard, name='student_dashboard'),
+    path('course/<int:id>/add-to-cart/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.cart_view, name='cart_view'),
+    path('cart/remove/<int:id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('checkout/verify/', views.verify_code, name='verify_code'),
+    path('checkout/success/', views.payment_success, name='payment_success'),
 ]

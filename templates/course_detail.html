@@ -14,7 +14,11 @@
         <a href="{% url 'course_students' course.id %}" class="btn btn-secondary">Students</a>
       </div>
     {% elif not is_enrolled %}
-      <a href="{% url 'enroll_course' course.id %}" class="btn btn-primary" style="margin-top:1.25rem; display:inline-flex;">Enroll in course</a>
+      {% if course.price > 0 %}
+        <a href="{% url 'add_to_cart' course.id %}" class="btn btn-primary" style="margin-top:1.25rem; display:inline-flex;">Add to Cart — ${{ course.price }}</a>
+      {% else %}
+        <a href="{% url 'enroll_course' course.id %}" class="btn btn-primary" style="margin-top:1.25rem; display:inline-flex;">Enroll for free</a>
+      {% endif %}
     {% else %}
       <p class="form-hint" style="margin-top:1rem; color:#4ade80;">✓ You are enrolled in this course</p>
     {% endif %}

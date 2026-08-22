@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Cart — EDULIX{% endblock %}
+
+{% block content %}
+<h1 class="section-title">Your Cart</h1>
+
+{% if courses %}
+<div style="margin-top:1.5rem;">
+  {% for course in courses %}
+  <div class="cart-item glass">
+    <div>
+      <div class="card-title" style="margin-bottom:0.2rem;">{{ course.title }}</div>
+      <span class="text-muted" style="font-size:0.85rem;">{{ course.get_category_display }}</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <span class="cart-price">${{ course.price }}</span>
+      <a href="{% url 'remove_from_cart' course.id %}" class="btn btn-secondary">Remove</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="cart-total-row">
+  <span>Total</span>
+  <span>${{ total }}</span>
+</div>
+
+<a href="{% url 'checkout' %}" class="btn btn-primary w-full" style="margin-top:1rem;">Proceed to Checkout</a>
+{% else %}
+<div class="glass" style="border-radius:1.25rem; padding:2.5rem; text-align:center; margin-top:1.5rem;">
+  <p class="text-muted">Your cart is empty.</p>
+  <a href="{% url 'course_list' %}" class="link" style="margin-top:0.5rem; display:inline-block;">Browse courses</a>
+</div>
+{% endif %}
+{% endblock %}

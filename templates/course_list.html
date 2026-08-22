@@ -69,6 +69,9 @@
       </div>
       <p class="text-muted" style="font-size:0.9rem">{{ course.description|truncatewords:18 }}</p>
       <div class="card-cta">
+        {% if course.price > 0 %}
+          <span class="text-muted" style="font-size:0.85rem;">${{ course.price }}</span>
+        {% endif %}
         <a href="{% url 'course_detail' course.id %}" class="btn">View course</a>
       </div>
     </div>
